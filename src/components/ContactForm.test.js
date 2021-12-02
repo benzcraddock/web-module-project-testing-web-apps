@@ -29,20 +29,48 @@ test('renders ONE error message if user enters less then 5 characters into first
   render(<ContactForm />);
 
   // Act
-  const firstNameField = screen.getByLabelText(/First Name*/i);
+  const firstNameField = screen.getByLabelText(/first name*/i);
   userEvent.type(firstNameField, "Ben");
 
+  // Assert
   const errorMessages = await screen.findAllByTestId('error');
   expect(errorMessages).toHaveLength(1);
     
 });
 
 test('renders THREE error messages if user enters no values into any fields.', async () => {
-  
+  // Arrange
+  render(<ContactForm />);
+
+  // Act
+  const submitButton = screen.getByRole("button");
+  userEvent.click(submitButton);
+
+  // Assert
+  await waitFor(() => {
+    const errorMessages = screen.queryAllByTestId('error');
+    expect(errorMessages).toHaveLength(3);
+  })
     
 });
 
 test('renders ONE error message if user enters a valid first name and last name but no email.', async () => {
+  // Arrange
+  render(<ContactForm />);
+
+  // Act
+  const firstNameField = screen.getByLabelText(/first name*/i);
+  userEvent.type(firstNameField, "Benjamin");
+
+  const lastNameField = screen.getByLabelText(/last name*/i);
+  userEvent.type(lastNameField, "Craddock");
+
+  const submitButton = screen.getByRole("button");
+  userEvent.click(submitButton);
+
+  // Assert
+  const errorMessages = await screen.getAllByTestId('error');
+  expect(errorMessages).toHaveLength(1);
     
 });
 
